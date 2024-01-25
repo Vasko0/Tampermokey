@@ -5,7 +5,7 @@
    console.log("FOUND");
    const mapSearchBar = document.createElement("span");
    mapSearchBar.innerHTML = `
-   <input id="autocomplete" placeholder="Test placeholeder" type="text" size="50">
+   <input id="autocomplete" placeholder="Start typing address here" type="text" size="50">
    <button onclick="calculateDrivingTime()">Calculate</button>
    <button type="button" onclick="showMap()">Show Map</button>
    <div id="output"></div>
