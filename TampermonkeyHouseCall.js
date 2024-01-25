@@ -1,3 +1,16 @@
+// ==UserScript==
+// @name         MapsRouteHouseCall
+// @namespace    ARGO
+// @version      2024-01-20
+// @description  try to take over the world!
+// @author       Vasko
+// @match        https://pro.housecallpro.com/pro/calendar
+// @icon         https://vaskotech.com/wp-content/uploads/2023/06/VaskoLogoRound-150x150.png
+// @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
+// ==/UserScript==
+
+(function() {
+    'use strict';
  //********************maps control*********************************************
 
  waitForKeyElements('[alt="logo"]', actionFunction, true)
@@ -211,3 +224,6 @@
  // script.parentNode.removeChild(script);
  script2.parentNode.removeChild(script2);
 }
+
+
+})();
