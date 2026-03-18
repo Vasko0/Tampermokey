@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MapsRouteHouseCall
 // @namespace    ARGO
-// @version      2026-03-18
+// @version      2026-03-18.1
 // @description  try to take over the world!
 // @author       Vasko
 // @match        https://pro.housecallpro.com/*
@@ -10,6 +10,7 @@
 // @match        https://api.housecallpro.com/pro/calendar*
 // @require      https://code.jquery.com/jquery-3.7.1.js
 // @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
+// @updateURL    https://raw.githubusercontent.com/Vasko0/Tampermokey/refs/heads/main/TampermonkeyHouseCall.js
 // ==/UserScript==
 
 (function() {
