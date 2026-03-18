@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MapsRouteHouseCall
 // @namespace    ARGO
-// @version      2026-03-18.1
+// @version      2026-03-18.2
 // @description  try to take over the world!
 // @author       Vasko
 // @match        https://pro.housecallpro.com/*
