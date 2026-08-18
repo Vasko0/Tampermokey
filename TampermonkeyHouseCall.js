@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MapsRouteHouseCall
 // @namespace    ARGO
-// @version      2026-03-16
+// @version      2026-08-12
 // @description  try to take over the world!
 // @author       Vasko
 // @match        https://pro.housecallpro.com/*
@@ -46,7 +46,7 @@ function actionFunction (jNode){
  <div id="map" style="z-index:20;position:relative;></div>
  <div id="fullAddress"></div>
  `;
- document.querySelectorAll('[aria-label="Settings"]')[0].closest("div").appendChild(mapSearchBar);
+ document.querySelectorAll('[aria-label="Settings"]')[1].closest("div").appendChild(mapSearchBar);
 
  runScripVas();
 };
