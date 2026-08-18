@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MapsRouteHouseCall
 // @namespace    ARGO
-// @version      2026-08-12
+// @version      2026-08-18_1-0
 // @description  try to take over the world!
 // @author       Vasko
 // @match        https://pro.housecallpro.com/*
@@ -42,12 +42,13 @@ function actionFunction (jNode){
  <button onclick="calculateDrivingTime()">Calculate</button>
  <button type="button" onclick="showMap()">Show Map</button>
  <button type="button" onclick="clearMapItems()">Clear</button>
+ <button type="button" id="initMapsBtn" onclick="ensureAutocomplete(true)">Init Maps</button>
+ <span id="mapsStatus" style="margin-left:6px;font-size:11px;color:#b00"></span>
  <div id="output"></div>
- <div id="map" style="z-index:20;position:relative;></div>
+ <div id="map" style="z-index:20;position:relative;"></div>
  <div id="fullAddress"></div>
  `;
  document.querySelectorAll('[aria-label="Settings"]')[1].closest("div").appendChild(mapSearchBar);
-
  runScripVas();
 };
 
@@ -148,18 +149,56 @@ function runScripVas(){
 
  //************************** MAP ***************************
 let autocompleteMaps;
+let autocompleteReady = false;
+let autocompleteWatcher = null;
 let state = "";
 
-function initAutocomplete() {
- autocompleteMaps = new google.maps.places.Autocomplete(
-   document.getElementById('autocomplete'),
-   {
+// HouseCall loads the Google Maps JS API lazily (only once the map view is opened),
+// so "google" is usually undefined when this script first runs.
+function mapsApiReady() {
+ return typeof google !== 'undefined' && google.maps && google.maps.places && google.maps.places.Autocomplete;
+}
 
+function setMapsStatus(text) {
+ const el = document.getElementById('mapsStatus');
+ if (el) el.textContent = text;
+}
+
+function initAutocomplete() {
+ if (autocompleteReady) return true;
+ if (!mapsApiReady()) return false;
+ const input = document.getElementById('autocomplete');
+ if (!input) return false;
+ autocompleteMaps = new google.maps.places.Autocomplete(
+   input,
+   {
      componentRestrictions: {'country':['US']},
      fields: ['place_id', 'geometry', 'name', 'formatted_address', 'address_components']
    }
  );
  autocompleteMaps.addListener('place_changed', onPlaceChanged);
+ autocompleteReady = true;
+ setMapsStatus('');
+ console.log("initAutocomplete OK");
+ return true;
+}
+
+// Try to init now; if the Maps API is not there yet, keep polling until it shows up.
+function ensureAutocomplete(manual) {
+ if (initAutocomplete()) {
+   if (manual) setMapsStatus('ready');
+   return true;
+ }
+ setMapsStatus('Maps API not loaded - open the Map view once, then come back');
+ if (!autocompleteWatcher) {
+   autocompleteWatcher = setInterval(function () {
+     if (initAutocomplete()) {
+       clearInterval(autocompleteWatcher);
+       autocompleteWatcher = null;
+     }
+   }, 500);
+ }
+ return false;
 }
 
 function onPlaceChanged() {
@@ -181,10 +220,24 @@ function onPlaceChanged() {
    }
  }
 }
-initAutocomplete();
+ensureAutocomplete();
+
+// Also re-check whenever the user touches the input, in case the API showed up late.
+(function watchAutocompleteInput() {
+ const input = document.getElementById('autocomplete');
+ if (!input) return;
+ ['focus', 'click', 'input'].forEach(function (ev) {
+   input.addEventListener(ev, function () { ensureAutocomplete(); });
+ });
+})();
 
 // *********************************************************
 function calculateDrivingTime() {
+ if (!mapsApiReady()) {
+   ensureAutocomplete(true);
+   alert('Google Maps API is not loaded yet. Open the Map view once, then press Init Maps.');
+   return;
+ }
  var arrayOfAddrAndDOMs = [];
  var from = document.getElementById('autocomplete').value;
 //  var streeetAddrAll = document.querySelectorAll('[data-testid="calendarItem__street"]');
@@ -312,12 +365,6 @@ function showMap() {
    mapVisible = true;
    }
 }
-
-
-
-
-
-
 
 `;
 
